@@ -114,3 +114,47 @@ jobs:
           tags: |
             ghcr.io/${{ github.repository_owner }}/pokeparty-backend:latest
             ghcr.io/${{ github.repository_owner }}/pokeparty-backend:${{ env.SHORT_SHA }}
+
+  deploy:
+    name: Deploy Backend to VPS
+    runs-on: ubuntu-latest
+    needs: publish
+    if: >
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Deploy Backend to production
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            echo "Starting backend deployment..."
+            
+            # Log in to GitHub Container Registry
+            echo ${{ secrets.GITHUB_TOKEN }} | sudo docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            
+            # Pull latest backend image
+            sudo docker pull ghcr.io/${{ github.repository_owner }}/pokeparty-backend:latest
+            
+            # Stop and remove old container
+            sudo docker stop pokeparty-backend || true
+            sudo docker rm pokeparty-backend || true
+            
+            # Run new container 
+            sudo docker run -d \
+              --name pokeparty-backend \
+              --restart unless-stopped \
+              -p 127.0.0.1:8000:8000 \
+              -v pokeparty_data:/app/data \
+              ghcr.io/${{ github.repository_owner }}/pokeparty-backend:latest
+            
+            # Clean up old images
+            sudo docker image prune -f
+            
+            echo "Backend deployment completed!"
+            echo "New container status:"
+            sudo docker ps | grep pokeparty-backend
+            
