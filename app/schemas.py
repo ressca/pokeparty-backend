@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, ConfigDict
 from typing import Optional
 from .config import LAST_POKEMON_ID
 
@@ -22,8 +22,7 @@ class UserResponse(UserBase):
     id: int
     profile_pic_pokemon_id: Optional[int] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class UserUpdate(BaseModel):
     username: Optional[str] = Field(None, min_length=3, max_length=20)
@@ -43,8 +42,7 @@ class FavoritePokemon(FavoritePokemonBase):
     id: int
     user_id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class FavoritePokemonDelete(FavoritePokemonBase):
     pass
