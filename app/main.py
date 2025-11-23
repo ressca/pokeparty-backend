@@ -2,6 +2,7 @@ from fastapi import FastAPI, Depends, status
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from . import auth
+from .routers import users
 from .database import get_db, engine
 from .services import get_or_create_pokemon_of_the_day
 from . import models
@@ -11,6 +12,7 @@ models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(root_path="/api")
 app.include_router(auth.router)
+app.include_router(users.router)
 
     
 # CORS middleware

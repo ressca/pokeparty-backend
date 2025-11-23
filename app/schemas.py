@@ -1,5 +1,6 @@
 from pydantic import BaseModel, EmailStr, Field
 from typing import Optional
+from .config import LAST_POKEMON_ID
 
 # --- Token Schemas ---
 class Token(BaseModel):
@@ -23,3 +24,9 @@ class UserResponse(UserBase):
 
     class Config:
         from_attributes = True
+
+class UserUpdate(BaseModel):
+    username: Optional[str] = Field(None, min_length=3, max_length=20)
+    password: Optional[str] = Field(None, min_length=6, max_length=50)
+    email: Optional[EmailStr] = None
+    profile_pic_pokemon_id: Optional[int] = Field(None, ge=1, le=LAST_POKEMON_ID)

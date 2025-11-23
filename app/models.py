@@ -12,7 +12,7 @@ class User(Base):
     hashed_password: str = Column(String, nullable=False)
     profile_pic_pokemon_id: int = Column(Integer, nullable=True)
 
-    favorite_pokemons = relationship("favorite_pokemon", back_populates="user")
+    favorite_pokemons = relationship("favorite_pokemon", back_populates="user", cascade="all, delete-orphan")
 
 
 class favorite_pokemon(Base):
