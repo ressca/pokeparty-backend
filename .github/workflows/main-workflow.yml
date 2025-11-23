@@ -32,6 +32,16 @@ jobs:
         run: |
           pip install -r requirements.txt
 
+      - name: Check for tests
+        id: check_tests
+        shell: bash
+        run: |
+          if [ -d "tests" ]; then
+            echo "tests_exist=true" >> $GITHUB_OUTPUT
+          else
+            echo "tests_exist=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Run tests
         if: steps.check_tests.outputs.tests_exist == 'true'
         run: |
