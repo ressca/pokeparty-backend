@@ -56,3 +56,47 @@ def delete_user_me(
 ):
     db.delete(current_user)
     db.commit()
+
+
+# Favorite Pokemon Endpoints
+@router.post("/favorite-pokemon", response_model=schemas.FavoritePokemon, status_code=status.HTTP_201_CREATED)
+def add_favorite_pokemon(
+    favorite_pokemon: schemas.FavoritePokemonCreate,
+    current_user: Annotated[models.User, Depends(get_current_user)],
+    db: Session = Depends(get_db)
+):
+    new_fav = models.favorite_pokemon(
+        user_id=current_user.id,
+        pokemon_id=favorite_pokemon.pokemon_id
+    )
+    db.add(new_fav)
+    db.commit()
+    db.refresh(new_fav)
+    return new_fav
+
+
+@router.get("/favorite-pokemons", response_model=list[schemas.FavoritePokemon])
+def get_favorite_pokemons(
+    current_user: Annotated[models.User, Depends(get_current_user)],
+    db: Session = Depends(get_db)
+):
+    favs = db.query(models.favorite_pokemon).filter(models.favorite_pokemon.user_id == current_user.id).all()
+    return favs
+
+
+@router.delete("/favorite-pokemon/", status_code=status.HTTP_204_NO_CONTENT)
+def delete_favorite_pokemon(
+    favorite_pokemon: schemas.FavoritePokemonDelete,
+    current_user: Annotated[models.User, Depends(get_current_user)],
+    db: Session = Depends(get_db)
+):
+    fav = db.query(models.favorite_pokemon).filter(
+        models.favorite_pokemon.user_id == current_user.id,
+        models.favorite_pokemon.pokemon_id == favorite_pokemon.pokemon_id
+    ).first()
+    
+    if not fav:
+        raise HTTPException(status_code=404, detail="Selected Pokemon is not in favorites")
+    
+    db.delete(fav)
+    db.commit()

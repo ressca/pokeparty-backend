@@ -30,3 +30,21 @@ class UserUpdate(BaseModel):
     password: Optional[str] = Field(None, min_length=6, max_length=50)
     email: Optional[EmailStr] = None
     profile_pic_pokemon_id: Optional[int] = Field(None, ge=1, le=LAST_POKEMON_ID)
+
+
+# --- Favorite Pokemon Schemas ---
+class FavoritePokemonBase(BaseModel):
+    pokemon_id: int = Field(..., ge=1, le=LAST_POKEMON_ID)
+
+class FavoritePokemonCreate(FavoritePokemonBase):
+    pass
+
+class FavoritePokemon(FavoritePokemonBase):
+    id: int
+    user_id: int
+
+    class Config:
+        from_attributes = True
+
+class FavoritePokemonDelete(FavoritePokemonBase):
+    pass
