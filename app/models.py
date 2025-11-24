@@ -32,3 +32,9 @@ class pokemon_of_the_day(Base):
     day_date: str = Column(String, index=True, unique=True, nullable=False)
     pokemon_id: int = Column(Integer, nullable=False)
 
+class popularity_leaderboard(Base):
+    __tablename__ = 'popularity_leaderboard'
+
+    id: int = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    pokemon_id: int = Column(Integer, nullable=False, index=True)
+    elo: int = Column(Integer, nullable=False)

@@ -46,3 +46,16 @@ class FavoritePokemon(FavoritePokemonBase):
 
 class FavoritePokemonDelete(FavoritePokemonBase):
     pass
+
+class PopularityLeaderboardBase(BaseModel):
+    pokemon_id: int
+    elo: int
+
+class PopularityLeaderboardCreate(PopularityLeaderboardBase):
+    pass
+
+class PopularityLeaderboard(PopularityLeaderboardBase):
+    id: int
+
+    class Config:
+        orm_mode = True
