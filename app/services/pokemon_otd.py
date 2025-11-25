@@ -2,8 +2,8 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from datetime import date
 import random
-from . import models
-from .config import LAST_POKEMON_ID
+from .. import models
+from ..config import LAST_POKEMON_ID
 
 def get_or_create_pokemon_of_the_day(db: Session) -> models.pokemon_of_the_day:
     """

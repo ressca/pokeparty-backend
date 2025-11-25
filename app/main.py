@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from . import auth
 from .routers import users, popularity
 from .database import get_db, engine
-from .services import get_or_create_pokemon_of_the_day
+from .services.pokemon_otd import get_or_create_pokemon_of_the_day
 from . import models
 
 
