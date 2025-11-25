@@ -58,5 +58,9 @@ class PopularityLeaderboardCreate(PopularityLeaderboardBase):
 class PopularityLeaderboard(PopularityLeaderboardBase):
     id: int
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
+
+class PopularityBattlePair(BaseModel):
+    pokemon1_id: int
+    pokemon2_id: int
+    session_id: str

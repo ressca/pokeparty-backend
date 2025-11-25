@@ -1,6 +1,7 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 from .database import Base
+from datetime import datetime, timezone
 
 
 class User(Base):
@@ -39,3 +40,14 @@ class PopularityLeaderboard(Base):
     id: int = Column(Integer, primary_key=True, index=True, autoincrement=True)
     pokemon_id: int = Column(Integer, nullable=False, index=True)
     elo: int = Column(Integer, nullable=False)
+
+
+class ComparisonSession(Base):
+    __tablename__ = "comparison_sessions"
+
+    id: int = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    session_id: str = Column(String, unique=True, index=True, nullable=False)
+    pokemon1_id: int = Column(Integer, nullable=False)
+    pokemon2_id: int = Column(Integer, nullable=False)
+    created_at: datetime = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
+    expires_at: datetime = Column(DateTime, nullable=False)
