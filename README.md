@@ -1,5 +1,15 @@
 # PokeParty Backend
 
+### Project Description
+PokeParty allows users to:
+
+- Browse a list of Pokémon.  
+- Add Pokémon to their favorites.  
+- Vote for Pokémon to indicate which one they like more.  
+- See rankings based on votes.  
+
+This makes PokeParty an interactive Pokémon platform combining collection, preference voting, and rankings in a fun UI.
+
 ## Overview
 **PokeParty** is a full-stack Pokémon-themed application consisting of:
 
