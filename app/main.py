@@ -18,7 +18,11 @@ app.include_router(popularity.router)
 # CORS middleware
 app.add_middleware( 
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "https://pokeparty.ressca.dev"],
+    allow_origins=[
+        "http://localhost:3000",
+        "https://pokeparty.ressca.dev",
+        "http://localhost:5173"
+        ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
