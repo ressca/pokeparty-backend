@@ -21,8 +21,12 @@ class UserCreate(UserBase):
 class UserResponse(UserBase):
     id: int
     profile_pic_pokemon_id: Optional[int] = None
-
+    
     model_config = ConfigDict(from_attributes=True)
+
+class UserUpdateResponse(UserResponse):
+    access_token: Optional[str] = None
+    token_type: Optional[str] = None
 
 class UserUpdate(BaseModel):
     username: Optional[str] = Field(None, min_length=3, max_length=20)

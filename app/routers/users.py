@@ -3,26 +3,30 @@ from sqlalchemy.orm import Session
 from typing import Annotated
 from .. import models, schemas
 from ..database import get_db
-from ..auth import get_current_user, get_password_hash
+from ..auth import get_current_user, get_password_hash, create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES
+from datetime import timedelta
 
 router = APIRouter(
     prefix="/users",
     tags=["users"],
 )
 
-@router.patch("/update", response_model=schemas.UserResponse)
+@router.patch("/update", response_model=schemas.UserUpdateResponse)
 def update_user_me(
     user_update: schemas.UserUpdate,
     current_user: Annotated[models.User, Depends(get_current_user)],
     db: Session = Depends(get_db)
     ):
     # Update fields if provided
+    username_changed = False
+    
     if user_update.username is not None:
         # Check if username taken
         existing_user = db.query(models.User).filter(models.User.username == user_update.username).first()
         if existing_user and existing_user.id != current_user.id:
              raise HTTPException(status_code=400, detail="Username already taken")
         current_user.username = user_update.username
+        username_changed = True
         
     if user_update.email is not None:
         # Check if email taken
@@ -33,13 +37,28 @@ def update_user_me(
 
     if user_update.password is not None:
         current_user.hashed_password = get_password_hash(user_update.password)
+        username_changed = True # Force token regeneration on password change
 
     if user_update.profile_pic_pokemon_id is not None:
         current_user.profile_pic_pokemon_id = user_update.profile_pic_pokemon_id
 
     db.commit()
     db.refresh(current_user)
-    return current_user
+    
+    # Prepare response
+    response_data = schemas.UserUpdateResponse.model_validate(current_user)
+    
+    # If username changed, generate new token
+    if username_changed:
+        access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        access_token = create_access_token(
+            data={"sub": current_user.username, "id": current_user.id},
+            expires_delta=access_token_expires
+        )
+        response_data.access_token = access_token
+        response_data.token_type = "bearer"
+        
+    return response_data
 
 
 @router.get("/current-user", response_model=schemas.UserResponse)
